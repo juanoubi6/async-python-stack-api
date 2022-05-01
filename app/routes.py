@@ -1,9 +1,11 @@
+import asyncio
+
 from fastapi import status
 
 from app.builder import build_api
 from app.domain import User, UserPrototype
 
-api = build_api()
+api = asyncio.run(build_api())
 
 
 @api.get("/users/{user_id}", status_code=status.HTTP_200_OK, response_model=User)

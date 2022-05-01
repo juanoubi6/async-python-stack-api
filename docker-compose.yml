@@ -11,10 +11,7 @@ services:
       retries: 5
     volumes:
       - ./schema.sql:/docker-entrypoint-initdb.d/schema.sql
-      - pgdata:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: pass
-      POSTGRES_DB: nationalrecondb
-volumes:
-  pgdata:
+      POSTGRES_DB: sample-database

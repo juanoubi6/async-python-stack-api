@@ -1,8 +1,10 @@
 from typing import Any
 
+from databases import Database
 from fastapi import FastAPI
 from starlette.responses import JSONResponse
 
+from app.builder.database_builder import build_database
 from app.repositories import UserRepository
 from app.services import UserService
 
@@ -13,8 +15,10 @@ class FastAPIWrapper(FastAPI):
         self.user_service = user_service
 
 
-def build_api() -> FastAPIWrapper:
-    user_service = _create_user_service()
+async def build_api() -> FastAPIWrapper:
+    database = await build_database()
+
+    user_service = _create_user_service(database)
 
     api = FastAPIWrapper(
         user_service=user_service,
@@ -24,8 +28,8 @@ def build_api() -> FastAPIWrapper:
     return api
 
 
-def _create_user_service() -> UserService:
-    user_repository = UserRepository("db")
+def _create_user_service(db: Database) -> UserService:
+    user_repository = UserRepository(db)
     user_service = UserService(user_repository)
 
     return user_service
