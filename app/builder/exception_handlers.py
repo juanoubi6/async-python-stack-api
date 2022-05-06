@@ -1,8 +1,15 @@
 from fastapi import Request, status, FastAPI
 from fastapi.responses import JSONResponse
+from pydantic import BaseModel
 
 from app.domain import DomainException, ResourceNotFoundException, AppException
 from app.repositories import DatabaseException, DatabaseParseException
+
+
+class ErrorResponse(BaseModel):
+    message: str
+    error: str
+    type: str
 
 
 def add_error_handlers(api: FastAPI):
@@ -37,14 +44,14 @@ def add_error_handlers(api: FastAPI):
 
 def _create_content_response(message: str, ex: Exception) -> dict:
     if isinstance(ex, AppException):
-        return {
-            "message": message,
-            "error": ex.message,
-            "type": str(type(ex).__name__)
-        }
+        return ErrorResponse(
+            message=message,
+            error=ex.message,
+            type=str(type(ex).__name__)
+        ).dict()
     else:
-        return {
-            "message": message,
-            "error": str(ex),
-            "type": str(type(ex).__name__)
-        }
+        return ErrorResponse(
+            message=message,
+            error=str(ex),
+            type=str(type(ex).__name__)
+        ).dict()
