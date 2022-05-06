@@ -11,14 +11,28 @@ class UserRepository:
         self.db = db
 
     async def get_user(self, user_id: int) -> User:
-        statement = UserDTO.select()
-        res1 = await self.db.fetch_one("select * from users")
+        query = UserDTO.select().where(UserDTO.c.id == user_id)
+        user_dto = await self.db.fetch_one(query)
+
         return User(
-            id=user_id, first_name="John", last_name="Doe", birth_date=datetime.date.today()
+            id=user_dto.get("id"),
+            first_name=user_dto.get("first_name"),
+            last_name=user_dto.get("last_name"),
+            birth_date=user_dto.get("birth_date")
         )
 
     async def create_user(self, prototype: UserPrototype) -> User:
-        #Some insert logic
+        query = UserDTO.insert().values(
+            first_name=prototype.first_name,
+            last_name=prototype.last_name,
+            birth_date=prototype.birth_date
+        )
+
+        inserted_id = await self.db.execute(query)
+
         return User(
-            id=1, first_name=prototype.first_name, last_name=prototype.last_name, birth_date=prototype.birth_date
+            id=inserted_id,
+            first_name=prototype.first_name,
+            last_name=prototype.last_name,
+            birth_date=prototype.birth_date
         )
