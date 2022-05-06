@@ -3,12 +3,13 @@ from pydantic import ValidationError
 
 from app.domain import User, UserPrototype
 from app.repositories.dtos import UserDTO
+from .base_transactional_dao import BaseTransactionalDAO
 from .exceptions import DatabaseException, DatabaseParseException
 
 
-class UserRepository:
+class UserRepository(BaseTransactionalDAO):
     def __init__(self, db: Database):
-        self.db = db
+        super().__init__(db)
 
     async def get_user(self, user_id: int) -> User:
         query = UserDTO.select().where(UserDTO.c.id == user_id)
