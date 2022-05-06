@@ -1,0 +1,5 @@
+{
+  "db_config": {
+    "uri": "postgresql+asyncpg://postgres:pass@api-database:5432/sample-database?ssl=false"
+  }
+}
