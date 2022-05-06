@@ -1,10 +1,12 @@
 import datetime
 
+from databases import Database
+
 from app.domain import User, UserPrototype
 
 
 class UserRepository:
-    def __init__(self, db):
+    def __init__(self, db: Database):
         self.db = db
 
     async def get_user(self, user_id: int) -> User:

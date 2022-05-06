@@ -2,9 +2,9 @@ from typing import Any
 
 from databases import Database
 from fastapi import FastAPI
-from starlette.responses import JSONResponse
+from fastapi.responses import JSONResponse
 
-from app.builder.database_builder import build_database
+from .database_builder import build_database
 from app.repositories import UserRepository
 from app.services import UserService
 

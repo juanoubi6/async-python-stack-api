@@ -15,3 +15,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: pass
       POSTGRES_DB: sample-database
+  api-server:
+    build: .
+    ports:
+      - "80:80"
