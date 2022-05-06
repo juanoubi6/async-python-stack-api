@@ -2,16 +2,17 @@ from typing import Any
 
 from databases import Database
 from fastapi import FastAPI
-from fastapi.responses import JSONResponse
 
-from .database_builder import build_database
 from app.repositories import UserRepository
 from app.services import UserService
+from .database_builder import build_database
+from .exception_handlers import add_error_handlers
 
 
 class FastAPIWrapper(FastAPI):
     def __init__(self, user_service: UserService = None, **extra: Any):
         super().__init__(**extra)
+        add_error_handlers(self)
         self.user_service = user_service
 
 

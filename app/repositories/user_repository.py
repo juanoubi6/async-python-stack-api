@@ -1,3 +1,5 @@
+from typing import Optional
+
 from databases import Database
 from pydantic import ValidationError
 
@@ -11,11 +13,14 @@ class UserRepository(BaseTransactionalDAO):
     def __init__(self, db: Database):
         super().__init__(db)
 
-    async def get_user(self, user_id: int) -> User:
+    async def get_user(self, user_id: int) -> Optional[User]:
         query = UserDTO.select().where(UserDTO.c.id == user_id)
 
         try:
             user_dto = await self.db.fetch_one(query)
+            if user_dto is None:
+                return None
+
             user = User(
                 id=user_dto.get("id"),
                 first_name=user_dto.get("first_name"),

@@ -10,7 +10,7 @@ class User(BaseModel):
     birth_date: datetime.date
 
 
-# UserPrototype indicates all fields needed to create an user
+# UserPrototype indicates all fields needed to create a user
 class UserPrototype(BaseModel):
     first_name: str
     last_name: str

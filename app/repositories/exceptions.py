@@ -1,16 +1,13 @@
-class DatabaseParseException(Exception):
-    def __init__(self, message: str):
-        super().__init__(message)
-        self.message = message
+from app.domain import AppException
 
 
-class DatabaseException(Exception):
-    def __init__(self, message: str):
-        super().__init__(message)
-        self.message = message
+class DatabaseParseException(AppException):
+    pass
 
 
-class TransactionAlreadyStartedException(Exception):
-    def __init__(self, message: str):
-        super().__init__(message)
-        self.message = message
+class DatabaseException(AppException):
+    pass
+
+
+class TransactionAlreadyStartedException(AppException):
+    pass
