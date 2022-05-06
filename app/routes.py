@@ -1,11 +1,15 @@
-import asyncio
-
 from fastapi import status
+from fastapi.responses import JSONResponse
 
-from app.builder import build_api
+from app.builder import FastAPIWrapper, decorate_api
 from app.domain import User, UserPrototype
 
-api = asyncio.run(build_api())
+api = FastAPIWrapper(default_response_class=JSONResponse)
+
+
+@api.on_event("startup")
+async def add_runtime_objects():
+    await decorate_api(api)
 
 
 @api.get("/users/{user_id}", status_code=status.HTTP_200_OK, response_model=User)

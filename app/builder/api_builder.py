@@ -10,22 +10,16 @@ from app.services import UserService
 
 
 class FastAPIWrapper(FastAPI):
-    def __init__(self, user_service: UserService, **extra: Any):
+    def __init__(self, user_service: UserService = None, **extra: Any):
         super().__init__(**extra)
         self.user_service = user_service
 
 
-async def build_api() -> FastAPIWrapper:
+async def decorate_api(api: FastAPIWrapper):
     database = await build_database()
-
     user_service = _create_user_service(database)
 
-    api = FastAPIWrapper(
-        user_service=user_service,
-        default_response_class=JSONResponse
-    )
-
-    return api
+    api.user_service = user_service
 
 
 def _create_user_service(db: Database) -> UserService:
