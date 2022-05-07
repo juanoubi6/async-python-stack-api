@@ -1,9 +1,10 @@
-from fastapi import Request, status, FastAPI
+from fastapi import Request, status
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 
 from app.domain import DomainException, ResourceNotFoundException, AppException
 from app.repositories import DatabaseException, DatabaseParseException
+from .api_wrapper import FastAPIWrapper
 
 
 class ErrorResponse(BaseModel):
@@ -12,7 +13,7 @@ class ErrorResponse(BaseModel):
     type: str
 
 
-def add_error_handlers(wrapper: FastAPI):
+def add_error_handlers(wrapper: FastAPIWrapper):
     @wrapper.exception_handler(DatabaseException)
     async def database_exc_handler(_: Request, exc: DatabaseException):
         return JSONResponse(

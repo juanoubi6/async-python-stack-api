@@ -6,6 +6,10 @@ from .exception_handlers import ErrorResponse
 
 
 def add_routes(wrapper: FastAPIWrapper):
+    @wrapper.get(path="/health", status_code=status.HTTP_200_OK)
+    async def healthcheck():
+        return "OK"
+
     @wrapper.get(
         path="/users/{user_id}",
         status_code=status.HTTP_200_OK,
