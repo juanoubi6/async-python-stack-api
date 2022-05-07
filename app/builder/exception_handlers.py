@@ -14,28 +14,28 @@ class ErrorResponse(BaseModel):
 
 def add_error_handlers(api: FastAPI):
     @api.exception_handler(DatabaseException)
-    async def resource_not_found_handler(_: Request, exc: DatabaseException):
+    async def database_exc_handler(_: Request, exc: DatabaseException):
         return JSONResponse(
             status_code=status.HTTP_400_BAD_REQUEST,
             content=_create_content_response("There was an error on some database operation", exc)
         )
 
     @api.exception_handler(DatabaseParseException)
-    async def resource_not_found_handler(_: Request, exc: DatabaseParseException):
+    async def database_parse_exc_handler(_: Request, exc: DatabaseParseException):
         return JSONResponse(
             status_code=status.HTTP_400_BAD_REQUEST,
             content=_create_content_response("There was an error parsing a database object", exc)
         )
 
     @api.exception_handler(ResourceNotFoundException)
-    async def resource_not_found_handler(_: Request, exc: ResourceNotFoundException):
+    async def resource_not_found_exc_handler(_: Request, exc: ResourceNotFoundException):
         return JSONResponse(
             status_code=status.HTTP_404_NOT_FOUND,
             content=_create_content_response("The resource you requested was not found", exc)
         )
 
     @api.exception_handler(DomainException)
-    async def domain_handler(_: Request, exc: DomainException):
+    async def domain_exc_handler(_: Request, exc: DomainException):
         return JSONResponse(
             status_code=status.HTTP_400_BAD_REQUEST,
             content=_create_content_response("There was a problem with your request", exc)

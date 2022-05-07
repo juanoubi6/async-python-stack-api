@@ -1,2 +1,2 @@
-from .user import User, UserPrototype
 from .exceptions import ResourceNotFoundException, DomainException, AppException
+from .user import User, UserPrototype

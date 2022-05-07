@@ -24,7 +24,7 @@ async def get_user(user_id: int):
 
 @api.post(
     path="/users",
-    status_code=status.HTTP_200_OK,
+    status_code=status.HTTP_201_CREATED,
     response_model=User
 )
 async def create_user(prototype: UserPrototype):
