@@ -10,3 +10,7 @@ class DomainException(AppException):
 
 class ResourceNotFoundException(AppException):
     pass
+
+
+class PaginationException(AppException):
+    pass

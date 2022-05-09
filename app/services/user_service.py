@@ -1,4 +1,4 @@
-from app.domain import User, UserPrototype, ResourceNotFoundException
+from app.domain import User, UserPrototype, ResourceNotFoundException, Page, PageRequest
 from app.repositories import UserRepository
 
 
@@ -12,6 +12,9 @@ class UserService:
             raise ResourceNotFoundException("User could not be found")
 
         return user
+
+    async def get_users(self, page_request: PageRequest) -> Page[User]:
+        return await self.user_repository.get_users(page_request)
 
     async def create_user(self, prototype: UserPrototype) -> User:
         # Suppose we have a lot of business logic here, and if something fails we need to roll back

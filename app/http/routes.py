@@ -1,6 +1,6 @@
 from fastapi import status
 
-from app.domain import User, UserPrototype
+from app.domain import User, UserPrototype, Page, PageRequest
 from .api_wrapper import FastAPIWrapper
 from .exception_handlers import ErrorResponse
 
@@ -9,6 +9,15 @@ def add_routes(wrapper: FastAPIWrapper):
     @wrapper.get(path="/health", status_code=status.HTTP_200_OK)
     async def healthcheck():
         return "OK"
+
+    @wrapper.get(
+        path="/users",
+        status_code=status.HTTP_200_OK,
+        response_model=Page[User]
+    )
+    async def get_users(page: str = None, size: int = 10):
+        page_request = PageRequest(cursor=page, size=size)
+        return await wrapper.user_service.get_users(page_request)
 
     @wrapper.get(
         path="/users/{user_id}",

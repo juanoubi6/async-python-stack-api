@@ -14,6 +14,13 @@ class ErrorResponse(BaseModel):
 
 
 def add_error_handlers(wrapper: FastAPIWrapper):
+    @wrapper.exception_handler(AppException)
+    async def app_exc_handler(_: Request, exc: AppException):
+        return JSONResponse(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            content=_create_content_response("There was a problem with your request", exc)
+        )
+
     @wrapper.exception_handler(DatabaseException)
     async def database_exc_handler(_: Request, exc: DatabaseException):
         return JSONResponse(
