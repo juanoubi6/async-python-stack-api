@@ -10,6 +10,7 @@ from ..domain import Page, PageRequest, NEXT_PAGE_PREFIX, PREVIOUS_PAGE_PREFIX
 
 T = TypeVar('T')
 
+
 class BaseTransactionalDAO:
     def __init__(self, db: Database, tx: Transaction = None):
         self.db = db
@@ -36,16 +37,15 @@ class BaseTransactionalDAO:
         self.tx = None
 
     async def pagination_query(
-            self, query, order_column, order_column_cursor_value,object_order_attribute_name:str, page_request: PageRequest, row_mapping_fn: Callable[[Mapping], T]
+            self, query, order_column, order_column_value, object_order_attribute_name: str, page_request: PageRequest,
+            row_mapping_fn: Callable[[Mapping], T]
     ) -> Page[T]:
         if page_request.is_next_cursor():
-            query = query.where(order_column > order_column_cursor_value).order_by(asc(order_column)).limit(
-                page_request.size + 1)
+            query = query.where(order_column > order_column_value).order_by(asc(order_column))
         elif page_request.is_previous_cursor():
-            query = query.where(order_column < order_column_cursor_value).order_by(desc(order_column)).limit(
-                page_request.size + 1)
+            query = query.where(order_column < order_column_value).order_by(desc(order_column))
         else:
-            query = query.order_by(asc(order_column)).limit(page_request.size + 1)
+            query = query.order_by(asc(order_column))
 
         try:
             rows = await self.db.fetch_all(query)

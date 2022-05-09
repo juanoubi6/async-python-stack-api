@@ -59,9 +59,9 @@ class UserRepository(BaseTransactionalDAO):
 
     # Users are sorted by id. They could be ordered by any other unique and sequential field
     async def get_users(self, page_request: PageRequest) -> Page[User]:
-        base_query = UserDTO.select()
+        base_query = UserDTO.select().limit(page_request.size + 1)
         order_column = UserDTO.c.id
-        order_column_cursor_value = int(page_request.get_cursor_value()) if page_request.cursor is not None else None
+        order_column_value = int(page_request.get_cursor_value()) if page_request.cursor is not None else None
         object_order_attribute_name = 'id'
         row_mapping_fn: Callable[[Mapping], User] = lambda row: User(
             id=row.get("id"),
@@ -73,7 +73,7 @@ class UserRepository(BaseTransactionalDAO):
         return await self.pagination_query(
             query=base_query,
             order_column=order_column,
-            order_column_cursor_value=order_column_cursor_value,
+            order_column_value=order_column_value,
             object_order_attribute_name=object_order_attribute_name,
             page_request=page_request,
             row_mapping_fn=row_mapping_fn
