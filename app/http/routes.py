@@ -15,9 +15,9 @@ def add_routes(wrapper: FastAPIWrapper):
         status_code=status.HTTP_200_OK,
         response_model=Page[User]
     )
-    async def get_users(page: str = None, size: int = 10):
+    async def get_users_paginated(page: str = None, size: int = 10):
         page_request = PageRequest(cursor=page, size=size)
-        return await wrapper.user_service.get_users(page_request)
+        return await wrapper.user_service.get_users_paginated(page_request)
 
     @wrapper.get(
         path="/users/{user_id}",

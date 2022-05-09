@@ -1,5 +1,5 @@
-from fastapi.responses import JSONResponse
 from fastapi.middleware.gzip import GZipMiddleware
+from fastapi.responses import JSONResponse
 
 from app.builder import add_events
 from app.http import add_routes, FastAPIWrapper, add_error_handlers, add_middlewares

@@ -58,7 +58,7 @@ class UserRepository(BaseTransactionalDAO):
         return user
 
     # Users are sorted by id. They could be ordered by any other unique and sequential field
-    async def get_users(self, page_request: PageRequest) -> Page[User]:
+    async def get_users_paginated(self, page_request: PageRequest) -> Page[User]:
         base_query = UserDTO.select().limit(page_request.size + 1)
         order_column = UserDTO.c.id
         order_column_value = int(page_request.get_cursor_value()) if page_request.cursor is not None else None

@@ -4,7 +4,7 @@ import pytest
 
 from app.domain import ResourceNotFoundException
 from app.services import UserService
-from tests.mock_data.mocks import MOCK_USER, MOCK_USER_PROTOTYPE
+from tests.mock_data.mocks import MOCK_USER, MOCK_USER_PROTOTYPE, MOCK_EMPTY_PAGE, MOCK_PAGE_REQUEST_WITHOUT_CURSOR
 
 user_service = UserService(user_repository=AsyncMock())
 
@@ -42,3 +42,13 @@ class TestUserService:
         mock_user_repository.start_tx.assert_called_once()
         mock_user_repository.create_user.assert_called_once_with(MOCK_USER_PROTOTYPE)
         mock_user_repository.commit_tx.assert_called_once()
+
+    @patch.object(user_service, "user_repository")
+    async def test_get_users_paginated_returns_users_page_on_success(self, mock_user_repository):
+        mock_user_repository.get_users_paginated = AsyncMock(return_value=MOCK_EMPTY_PAGE)
+
+        response = await user_service.get_users_paginated(MOCK_PAGE_REQUEST_WITHOUT_CURSOR)
+
+        assert response == MOCK_EMPTY_PAGE
+
+        mock_user_repository.get_users_paginated.assert_called_once_with(MOCK_PAGE_REQUEST_WITHOUT_CURSOR)

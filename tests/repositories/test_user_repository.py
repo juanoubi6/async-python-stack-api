@@ -1,11 +1,12 @@
 import datetime
-from unittest.mock import patch, AsyncMock
+from unittest.mock import patch, AsyncMock, ANY
 
 import pytest
 
-from app.domain import User
+from app.domain import User, Page, NEXT_PAGE_PREFIX, PageRequest
 from app.repositories import UserRepository, DatabaseParseException, DatabaseException
-from tests.mock_data.mocks import MOCK_USER, MOCK_USER_PROTOTYPE
+from app.repositories.dtos import UserDTO
+from tests.mock_data.mocks import MOCK_USER, MOCK_USER_PROTOTYPE, MOCK_EMPTY_PAGE
 from tests.repositories.expected_queries import GET_USER_EXPECTED_QUERY, CREATE_USER_EXPECTED_QUERY
 
 user_repository = UserRepository(db=AsyncMock())
@@ -103,3 +104,42 @@ class TestUserRepository:
 
         with pytest.raises(DatabaseException):
             await user_repository.create_user(MOCK_USER_PROTOTYPE)
+
+    # GET USERS
+    @patch.object(user_repository, "pagination_query")
+    async def test_get_users_calls_pagination_query_with_valid_params_on_page_request_without_cursor(self,
+                                                                                                     pagination_query_fn_mock):
+        pagination_query_fn_mock.side_effect = AsyncMock(return_value=MOCK_EMPTY_PAGE)
+
+        page_request = PageRequest(cursor=None, size=5)
+
+        res = await user_repository.get_users_paginated(page_request)
+
+        assert len(res.data) == 0
+        pagination_query_fn_mock.assert_called_once_with(
+            query=ANY,
+            order_column=UserDTO.c.id,
+            order_column_value=None,
+            object_order_attribute_name='id',
+            page_request=page_request,
+            row_mapping_fn=ANY
+        )
+
+    @patch.object(user_repository, "pagination_query")
+    async def test_get_users_calls_pagination_query_with_valid_params_on_page_request_with_valid_cursor(self,
+                                                                                                     pagination_query_fn_mock):
+        pagination_query_fn_mock.side_effect = AsyncMock(return_value=MOCK_EMPTY_PAGE)
+
+        page_request = PageRequest(cursor=NEXT_PAGE_PREFIX + "1", size=5)
+
+        res = await user_repository.get_users_paginated(page_request)
+
+        assert len(res.data) == 0
+        pagination_query_fn_mock.assert_called_once_with(
+            query=ANY,
+            order_column=UserDTO.c.id,
+            order_column_value=1,
+            object_order_attribute_name='id',
+            page_request=page_request,
+            row_mapping_fn=ANY
+        )
