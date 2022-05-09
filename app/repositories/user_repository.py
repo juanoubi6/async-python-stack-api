@@ -62,6 +62,7 @@ class UserRepository(BaseTransactionalDAO):
         base_query = UserDTO.select()
         order_column = UserDTO.c.id
         order_column_cursor_value = int(page_request.get_cursor_value()) if page_request.cursor is not None else None
+        object_order_attribute_name = 'id'
         row_mapping_fn: Callable[[Mapping], User] = lambda row: User(
             id=row.get("id"),
             first_name=row.get("first_name"),
@@ -73,6 +74,7 @@ class UserRepository(BaseTransactionalDAO):
             query=base_query,
             order_column=order_column,
             order_column_cursor_value=order_column_cursor_value,
+            object_order_attribute_name=object_order_attribute_name,
             page_request=page_request,
             row_mapping_fn=row_mapping_fn
         )

@@ -36,7 +36,7 @@ class BaseTransactionalDAO:
         self.tx = None
 
     async def pagination_query(
-            self, query, order_column, order_column_cursor_value, page_request: PageRequest, row_mapping_fn: Callable[[Mapping], T]
+            self, query, order_column, order_column_cursor_value,object_order_attribute_name:str, page_request: PageRequest, row_mapping_fn: Callable[[Mapping], T]
     ) -> Page[T]:
         if page_request.is_next_cursor():
             query = query.where(order_column > order_column_cursor_value).order_by(asc(order_column)).limit(
@@ -55,11 +55,11 @@ class BaseTransactionalDAO:
         except Exception as ex:
             raise DatabaseException(str(ex))
 
-        data.sort(key=lambda user: user.id)
+        data.sort(key=lambda elem: getattr(elem, object_order_attribute_name))
         data_size = len(data)
 
         return_data = _calculate_data(page_request, data)
-        id_list = [str(user.id) for user in return_data]
+        id_list = [str(getattr(elem, object_order_attribute_name)) for elem in return_data]
 
         return Page(
             data=return_data,
