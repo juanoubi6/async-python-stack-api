@@ -3,7 +3,8 @@ from typing import Any, List, TypeVar, Callable, Mapping
 from databases import Database
 from databases.core import Transaction
 from pydantic import ValidationError
-from sqlalchemy import asc, desc
+from sqlalchemy import asc, desc, Column
+from sqlalchemy.sql import selectable
 
 from .exceptions import TransactionAlreadyStartedException, DatabaseParseException, DatabaseException
 from ..domain import Page, PageRequest, NEXT_PAGE_PREFIX, PREVIOUS_PAGE_PREFIX
@@ -37,7 +38,12 @@ class BaseTransactionalDAO:
         self.tx = None
 
     async def pagination_query(
-            self, query, order_column, order_column_value, object_order_attribute_name: str, page_request: PageRequest,
+            self,
+            query: selectable,
+            order_column: Column,
+            order_column_value: Any,
+            object_order_attribute_name: str,
+            page_request: PageRequest,
             row_mapping_fn: Callable[[Mapping], T]
     ) -> Page[T]:
         if page_request.is_next_cursor():

@@ -67,7 +67,10 @@ class UserRepository(BaseTransactionalDAO):
             id=row.get("id"),
             first_name=row.get("first_name"),
             last_name=row.get("last_name"),
-            birth_date=row.get("birth_date")
+            birth_date=row.get("birth_date"),
+            created=row.get("created"),
+            updated=row.get("updated"),
+            deleted=row.get("deleted"),
         )
 
         return await self.pagination_query(
